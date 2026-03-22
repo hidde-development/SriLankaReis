@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broers Sri Lanka Reis</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Leaflet CSS & JS voor de kaart -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- FontAwesome voor icoontjes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts voor de sfeer -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        jungle: '#2C5530',
+                        tea: '#84A98C',
+                        spice: '#D97736',
+                        sand: '#F4F1DE',
+                        ocean: '#3D5A80'
+                    },
+                    fontFamily: {
+                        heading: ['"Playfair Display"', 'serif'],
+                        body: ['"Nunito"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F4F1DE; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F4F1DE; }
+        ::-webkit-scrollbar-thumb { background: #84A98C; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2C5530; }
+
+        /* Accordion Animatie */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            opacity: 0;
+        }
+        .accordion-content.open {
+            max-height: 1200px;
+            opacity: 1;
+        }
+
+        .map-container { height: 400px; }
+        @media (min-width: 1024px) {
+            .map-container { height: 100vh; position: sticky; top: 0; }
+        }
+
+        /* Leaflet Custom Popup Styling */
+        .leaflet-popup-content-wrapper {
+            background-color: #F4F1DE;
+            color: #2C5530;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .leaflet-popup-tip { background-color: #F4F1DE; }
+        .leaflet-popup-content { margin: 12px; font-size: 14px; font-weight: 600; }
+    </style>
+</head>
+<body class="font-body text-gray-800 antialiased">
+
+    <div class="flex flex-col lg:flex-row min-h-screen">
+
+        <!-- Linker Kolom: De Kaart -->
+        <div class="w-full lg:w-1/2 map-container z-10 shadow-xl border-b-4 lg:border-b-0 lg:border-r-4 border-jungle" id="map"></div>
+
+        <!-- Rechter Kolom: Het Schema -->
+        <div class="w-full lg:w-1/2 bg-sand overflow-y-auto" style="height: 100vh;">
+
+            <!-- Header -->
+            <div class="bg-jungle text-sand p-8 text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M54.627 0l.83.83-54.627 54.627-.83-.83z\' fill=\'%23ffffff\' fill-opacity=\'1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E');"></div>
+                <h1 class="font-heading text-4xl md:text-5xl font-bold mb-2">Broers in Sri Lanka</h1>
+                <p class="text-tea font-semibold text-lg tracking-wide uppercase"><i class="fa-solid fa-plane-departure mr-2"></i> De Ultieme Route (22 Jul - 10 Aug)</p>
+            </div>
+
+            <!-- Intro tekst -->
+            <div class="p-6 text-center border-b border-tea/30">
+                <p class="text-gray-600 mb-2">Van de weelderige jungle en de beroemde theetrein, tot wilde olifanten, een luxe bruiloft en chillen aan de oostkust. Dit is jullie reis!</p>
+                <span class="inline-block bg-spice text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm">
+                    <i class="fa-solid fa-sun mr-1"></i> Moesson-Proof Route
+                </span>
+            </div>
+
+            <!-- Accordion Container -->
+            <div id="itinerary" class="p-4 md:p-8 space-y-4">
+                <!-- Wordt gevuld met JavaScript -->
+            </div>
+
+            <div class="p-8 text-center text-gray-500 text-sm">
+                <p><i class="fa-solid fa-leaf text-tea mr-1"></i> Gemaakt voor het ultieme broers-avontuur</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DE REIS DATA ---
+        const tripData = [
+            {
+                id: "negombo-start",
+                date: "22 Juli",
+                title: "Aankomst & Bijkomen",
+                location: "Negombo",
+                lat: 7.2008,
+                lng: 79.8737,
+                icon: "fa-plane-arrival",
+                color: "text-ocean",
+                image: "https://images.unsplash.com/photo-1586521995568-39abaa0c2311?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Aankomst op de luchthaven (Colombo). Pak direct een taxi naar Negombo (ca. 20-30 min). Neem een duik in het zwembad, scoor je eerste Lion biertje en eet een goede lokale curry om in de sfeer te komen.",
+                todos: [
+                    "Visum (ETA) vooraf online regelen en uitprinten.",
+                    "Lokaal SIM-kaartje (bijv. Dialog of Mobitel) kopen in de aankomsthal.",
+                    "Eerste lading Sri Lankaanse Roepies (LKR) pinnen."
+                ]
+            },
+            {
+                id: "sigiriya",
+                date: "23 - 24 Juli",
+                title: "De Jungle in & Zonsopkomst",
+                location: "Habarana / Sigiriya",
+                lat: 7.9570,
+                lng: 80.7603,
+                icon: "fa-mountain",
+                color: "text-jungle",
+                image: "https://images.unsplash.com/photo-1580100586938-02822d99c4a8?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Reisdag met chauffeur naar Habarana (het hart van de Culturele Driehoek). Op 24 juli gaat de wekker om 04:30 uur voor de klim (45 min) op de Pidurangala Rots. Vanaf hier zie je de zon opkomen met een waanzinnig uitzicht op de beroemde Leeuwenrots. <br><br><strong>Tip voor het 'Elephant Fence':</strong> In Habarana is het human-elephant conflict erg actueel. Je kunt hier een speciale eco-tour doen om te zien hoe boeren hun dorpen beschermen met elektrische olifantenhekken, of je kunt 's nachts de wacht houden in een boomhut. Heel leerzaam!",
+                todos: [
+                    "Privéchauffeur regelen voor de rit van Negombo naar Habarana.",
+                    "Goede zaklamp (of opgeladen telefoon) klaarleggen voor de nachtelijke klim.",
+                    "Eventueel een 'Elephant Fence' eco-tour of nachtwacht-tour boeken in Habarana."
+                ]
+            },
+            {
+                id: "kandy",
+                date: "25 Juli",
+                title: "De Boeddha & De Bergen",
+                location: "Kandy",
+                lat: 7.2906,
+                lng: 80.6337,
+                icon: "fa-vihara",
+                color: "text-spice",
+                image: "https://images.unsplash.com/photo-1625736300986-6bd28d115e01?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Rit naar de culturele hoofdstad in de bergen. Bezoek in de middag de beroemde 'Tempel van de Tand'. Wandel een rondje om het grote stadsmeer en bereid je voor op de treinreis van morgen.",
+                todos: [
+                    "Kleding klaarleggen of kopen die schouders en knieën bedekt (verplicht voor de tempel).",
+                    "Zorgen dat jullie grote bagage met een chauffeur mee vooruit gaat naar Ella (of Kandy)."
+                ]
+            },
+            {
+                id: "ella",
+                date: "26 - 27 Juli",
+                title: "De Treinreis & Ella Rock Hike",
+                location: "Ella",
+                lat: 6.8667,
+                lng: 81.0466,
+                icon: "fa-train",
+                color: "text-jungle",
+                image: "https://images.unsplash.com/photo-1546890975-7596e98cdbf1?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Dag 1: De iconische treinreis (6-7 uur). Deuren open, benen naar buiten en genieten van de theeplantages. Dag 2: De Ella Rock hike (ca. 4 uur). Start om 07:00, wandel over het treinspoor en klim omhoog voor een episch uitzicht. Sluit af bij de Nine Arches Bridge.",
+                todos: [
+                    "Treintickets Kandy-Ella boeken! (Dit moet je écht nu of uiterlijk in juni al regelen via 12Go.asia).",
+                    "Goede wandelschoenen of stevige sneakers inpakken.",
+                    "Voldoende water inslaan voor de hike naar Ella Rock."
+                ]
+            },
+            {
+                id: "udawalawe",
+                date: "28 - 29 Juli",
+                title: "Olifanten Safari!",
+                location: "Udawalawe",
+                lat: 6.4350,
+                lng: 80.8875,
+                icon: "fa-elephant",
+                color: "text-spice",
+                image: "https://images.unsplash.com/photo-1544258925-5fdb94af39b6?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Reis op 28 juli bergafwaarts naar de savanne. Op 29 juli zitten jullie om 05:30 uur in een open jeep in het Udawalawe National Park. Olifanten gegarandeerd! Na het ontbijt reizen jullie meteen door naar het zuiden.",
+                todos: [
+                    "Jeepsafari + privégids vooraf boeken (of via jullie guesthouse regelen zodra je aankomt).",
+                    "Muggenspray (met DEET) inslaan voor in het park.",
+                    "Zonnebrand, zonnebril en een pet klaarleggen voor in de open jeep."
+                ]
+            },
+            {
+                id: "galle",
+                date: "29 - 30 Juli",
+                title: "VOC Muren & Kust",
+                location: "Galle Fort",
+                lat: 6.0274,
+                lng: 80.2168,
+                icon: "fa-chess-rook",
+                color: "text-ocean",
+                image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Na de safari komen jullie aan in Galle. Ontdek dit fantastische, oude ommuurde VOC-fort vol hippe straatjes, terrasjes en uitzicht op zee. Op 30 juli vertrekken jullie voor het laatste korte stukje naar de trouwlocatie.",
+                todos: [
+                    "Hotel binnen de muren van het Fort boeken voor de leukste sfeer.",
+                    "Chauffeur regelen voor de rit van Udawalawe naar Galle."
+                ]
+            },
+            {
+                id: "kalutara",
+                date: "31 Jul - 2 Aug",
+                title: "DE BRUILOFT 💍",
+                location: "Anantara Kalutara",
+                lat: 6.5854,
+                lng: 79.9607,
+                icon: "fa-champagne-glasses",
+                color: "text-spice",
+                image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Aankomst bij het luxe resort. Pak jullie pakken uit, was het reiszweet eraf en maak je klaar. 1 Augustus is de grote dag! Daarna heerlijk uitbrakken, uitslapen en genieten van de luxe voordat het tweede deel van de reis begint.",
+                todos: [
+                    "Pakken uithangen en eventueel laten stomen bij het resort.",
+                    "Kado/envelop voor het bruidspaar inpakken.",
+                    "Speech of stukje nog één keer goed oefenen samen!"
+                ]
+            },
+            {
+                id: "trincomalee",
+                date: "3 - 6 Aug",
+                title: "Bounty Stranden (Oostkust)",
+                location: "Trincomalee / Nilaveli",
+                lat: 8.5874,
+                lng: 81.2152,
+                icon: "fa-umbrella-beach",
+                color: "text-ocean",
+                image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Ontsnap aan de moesson! Een lange reisdag dwars over het eiland naar het zonnige noordoosten. Chillen op het witte zand van Nilaveli, en huur op 5 augustus een bootje om te snorkelen met schildpadden en rifhaaien bij Pigeon Island.",
+                todos: [
+                    "Lange binnenlandse taxi/transfer (van Kalutara naar Trincomalee) goed van tevoren regelen.",
+                    "Snorkeltour naar Pigeon Island regelen via jullie verblijf.",
+                    "Zwemkleding en een goed boek in de aanslag houden."
+                ]
+            },
+            {
+                id: "negombo-end",
+                date: "7 - 8 Aug",
+                title: "De Laatste Avonden",
+                location: "Negombo",
+                lat: 7.2100,
+                lng: 79.8800,
+                icon: "fa-cocktail",
+                color: "text-jungle",
+                image: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Jullie verlaten de oostkust en reizen in ca. 5 uur terug richting Negombo. Tijd om wat laatste souvenirs te scoren, nog één keer een goede Kottu Roti te eten en te proosten op een legendarische reis met je broer.",
+                todos: [
+                    "Laatste Roepies opmaken aan goede maaltijden of souvenirs.",
+                    "Online inchecken voor de KLM/andere vlucht vanaf Colombo."
+                ]
+            },
+            {
+                id: "airport",
+                date: "9 - 10 Aug",
+                title: "Vlucht naar Huis",
+                location: "Colombo Airport",
+                lat: 7.1803,
+                lng: 79.8833,
+                icon: "fa-plane-departure",
+                color: "text-gray-600",
+                image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop",
+                imgAlt: "",
+                details: "Pak een korte taxi (20 min) van Negombo naar de luchthaven. Met een jetlag, een bruin kleurtje en een hoop mooie verhalen landen jullie uiterlijk 10 augustus weer op Schiphol.",
+                todos: [
+                    "Paspoorten en tickets bij de hand houden.",
+                    "Achterbank van de taxi checken of je niks bent vergeten!",
+                    "Foto's en verhalen delen in de familie groepsapp."
+                ]
+            }
+        ];
+
+        // --- 2. INIT LEAFLET KAART ---
+        // Centreer de kaart op Sri Lanka
+        const map = L.map('map').setView([7.8731, 80.7718], 7);
+
+        // Voeg de OpenStreetMap tiles toe
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Sla markers op om ze later te kunnen openen
+        const markers = {};
+        const latLngs = [];
+
+        // --- 3. BOUW INTERFACE & KAART MARKERS ---
+        const itineraryContainer = document.getElementById('itinerary');
+
+        tripData.forEach((stop, index) => {
+            // -- Kaart logica --
+            const coords = [stop.lat, stop.lng];
+            latLngs.push(coords);
+
+            // Maak een custom HTML marker icoon
+            const customIcon = L.divIcon({
+                className: 'custom-icon',
+                html: `<div class="bg-white rounded-full border-4 border-${stop.color.replace('text-', '')} w-8 h-8 flex items-center justify-center shadow-lg"><i class="fa-solid ${stop.icon} ${stop.color} text-sm"></i></div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+
+            const marker = L.marker(coords, {icon: customIcon}).addTo(map);
+            marker.bindPopup(`<div class="text-center"><strong class="font-heading text-lg">${stop.location}</strong><br/><span class="text-xs text-gray-500">${stop.date}</span></div>`);
+            markers[stop.id] = marker;
+
+            // -- Accordion logica --
+            const isFirst = index === 0;
+            const itemHTML = `
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:border-tea transition-colors duration-300 cursor-pointer group" onclick="toggleAccordion('${stop.id}')">
+
+                    <!-- Header -->
+                    <div class="p-5 flex items-center justify-between">
+                        <div class="flex items-center space-x-4 w-full">
+                            <!-- Datum Badge -->
+                            <div class="bg-sand text-jungle font-bold text-xs uppercase tracking-wide py-2 px-3 rounded-lg text-center w-24 shrink-0 border border-tea/30">
+                                ${stop.date.replace(' - ', '<br>')}
+                            </div>
+
+                            <!-- Titel & Locatie -->
+                            <div class="flex-grow">
+                                <h3 class="font-heading font-bold text-lg text-gray-800 group-hover:text-spice transition-colors">${stop.title}</h3>
+                                <p class="text-sm text-gray-500 font-semibold"><i class="fa-solid fa-location-dot mr-1 text-tea"></i> ${stop.location}</p>
+                            </div>
+
+                            <!-- Chevron -->
+                            <div class="text-gray-400">
+                                <i id="icon-${stop.id}" class="fa-solid fa-chevron-down transition-transform duration-300 ${isFirst ? 'rotate-180' : ''}"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content (Verborgen of open) -->
+                    <div id="content-${stop.id}" class="accordion-content bg-sand/30 border-t border-gray-100 ${isFirst ? 'open' : ''}">
+
+                        <!-- Afbeelding -->
+                        <div class="w-full h-48 md:h-56 bg-gray-200 relative">
+                            <img src="${stop.image}" alt="${stop.imgAlt}" class="w-full h-full object-cover" loading="lazy" />
+                        </div>
+
+                        <div class="p-5">
+                            <!-- Beschrijving -->
+                            <div class="text-sm text-gray-700 leading-relaxed border-l-4 border-spice ml-2 mb-5 pl-4 bg-white py-3 pr-3 rounded-r-lg shadow-sm">
+                                ${stop.details}
+                            </div>
+
+                            <!-- To Do Lijst -->
+                            <div class="bg-[#EAE6D3] rounded-lg p-4 shadow-inner">
+                                <h4 class="font-heading font-bold text-jungle mb-3 flex items-center">
+                                    <i class="fa-solid fa-list-check mr-2 text-spice"></i> To Do / Regelen:
+                                </h4>
+                                <ul class="space-y-2 text-sm text-gray-800">
+                                    ${stop.todos.map(todo => `
+                                        <li class="flex items-start">
+                                            <i class="fa-regular fa-square-check text-tea mt-1 mr-2 shrink-0"></i>
+                                            <span>${todo}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+            itineraryContainer.innerHTML += itemHTML;
+        });
+
+        // -- Teken de route lijn --
+        const routeLine = L.polyline(latLngs, {
+            color: '#D97736', // Spice color
+            weight: 3,
+            opacity: 0.7,
+            dashArray: '5, 10', // Stippellijn
+            lineJoin: 'round'
+        }).addTo(map);
+
+        // Pas de kaart aan zodat de hele route zichtbaar is
+        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+
+        // --- 4. ACCORDION FUNCTIE ---
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            const isOpen = content.classList.contains('open');
+
+            // Sluit alle andere accordions
+            document.querySelectorAll('.accordion-content').forEach(el => {
+                el.classList.remove('open');
+                el.style.paddingTop = '0';
+                el.style.paddingBottom = '0';
+            });
+            document.querySelectorAll('.fa-chevron-down').forEach(el => {
+                el.classList.remove('rotate-180');
+            });
+
+            // Toggle de geklikte
+            if (!isOpen) {
+                content.classList.add('open');
+                icon.classList.add('rotate-180');
+
+                // --- Koppel dit aan de kaart! ---
+                const stopData = tripData.find(s => s.id === id);
+                if (stopData) {
+                    // Zoom soepel in op de locatie en open de popup
+                    map.flyTo([stopData.lat, stopData.lng], 9, {
+                        animate: true,
+                        duration: 1.5
+                    });
+                    setTimeout(() => {
+                        markers[id].openPopup();
+                    }, 1500);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
