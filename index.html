@@ -55,7 +55,7 @@
             opacity: 0;
         }
         .accordion-content.open {
-            max-height: 1200px;
+            max-height: 3000px;
             opacity: 1;
         }
 
@@ -114,6 +114,13 @@
 
     <script>
         // --- 1. DE REIS DATA ---
+        const tipIcons = {
+            eten: { icon: "fa-utensils", color: "#D97736", label: "Eten" },
+            drinken: { icon: "fa-beer-mug-empty", color: "#3D5A80", label: "Drinken" },
+            bezienswaardigheid: { icon: "fa-camera", color: "#2C5530", label: "Bezienswaardigheid" },
+            activiteit: { icon: "fa-person-hiking", color: "#84A98C", label: "Activiteit" }
+        };
+
         const tripData = [
             {
                 id: "negombo-start",
@@ -131,6 +138,13 @@
                     "Visum (ETA) vooraf online regelen en uitprinten.",
                     "Lokaal SIM-kaartje (bijv. Dialog of Mobitel) kopen in de aankomsthal.",
                     "Eerste lading Sri Lankaanse Roepies (LKR) pinnen."
+                ],
+                tips: [
+                    { type: "eten", name: "Lords Restaurant", desc: "Topper voor je eerste Sri Lankaanse curry. Groot menu, locals eten hier ook.", lat: 7.2094, lng: 79.8388 },
+                    { type: "eten", name: "Negombo Vismarkt", desc: "Enorme verse vismarkt aan het strand. 's Ochtends vroeg het meest indrukwekkend.", lat: 7.2135, lng: 79.8355 },
+                    { type: "drinken", name: "Rodeo Pub", desc: "Relaxte bar voor je eerste Lion of Arrack. Populair bij locals en reizigers.", lat: 7.2102, lng: 79.8408 },
+                    { type: "bezienswaardigheid", name: "Dutch Canal", desc: "Koloniale waterweg uit de VOC-tijd. Leuk voor een korte boottochtje.", lat: 7.2050, lng: 79.8550 },
+                    { type: "activiteit", name: "Negombo Lagoon", desc: "Huur een kayak of neem een boottour door de mangroves. Veel vogels!", lat: 7.1800, lng: 79.8500 }
                 ]
             },
             {
@@ -149,6 +163,14 @@
                     "Privéchauffeur regelen voor de rit van Negombo naar Habarana.",
                     "Goede zaklamp (of opgeladen telefoon) klaarleggen voor de nachtelijke klim.",
                     "Eventueel een 'Elephant Fence' eco-tour of nachtwacht-tour boeken in Habarana."
+                ],
+                tips: [
+                    { type: "eten", name: "The Village (Habarana)", desc: "Authentiek dorpsrestaurant met rice & curry. Budget-friendly en heerlijk.", lat: 7.9530, lng: 80.7530 },
+                    { type: "drinken", name: "Cinnamon Lodge Bar", desc: "Cocktail bij het zwembad na een lange dag. Iets duurder maar mooie sfeer.", lat: 7.9590, lng: 80.7510 },
+                    { type: "bezienswaardigheid", name: "Pidurangala Rots", desc: "Hét uitzichtpunt voor zonsopkomst over Sigiriya. Veel rustiger dan de Leeuwenrots zelf.", lat: 7.9530, lng: 80.7560 },
+                    { type: "bezienswaardigheid", name: "Sigiriya Leeuwenrots", desc: "UNESCO werelderfgoed. De beroemde rotstempel met fresco's. Apart betalen (ca. $30).", lat: 7.9570, lng: 80.7603 },
+                    { type: "activiteit", name: "Minneriya / Kaudulla NP", desc: "Jeepsafari met wilde olifanten. Tussen juli-september 'The Gathering' met honderden olifanten!", lat: 8.0340, lng: 80.8940 },
+                    { type: "activiteit", name: "Elephant Fence Night Watch", desc: "Unieke eco-tour: overnacht in een boomhut en help boeren hun oogst beschermen.", lat: 7.9480, lng: 80.7400 }
                 ]
             },
             {
@@ -166,6 +188,14 @@
                 todos: [
                     "Kleding klaarleggen of kopen die schouders en knieën bedekt (verplicht voor de tempel).",
                     "Zorgen dat jullie grote bagage met een chauffeur mee vooruit gaat naar Ella (of Kandy)."
+                ],
+                tips: [
+                    { type: "eten", name: "Kandy Muslim Hotel", desc: "Misleidende naam — dit is een legendarisch lokaal eetcafé. Beste kottu roti van Kandy.", lat: 7.2932, lng: 80.6350 },
+                    { type: "eten", name: "Balaji Dosai", desc: "Ongelooflijk goedkope en lekkere Zuid-Indiase dosai's en hoppers.", lat: 7.2920, lng: 80.6345 },
+                    { type: "drinken", name: "The Pub - Kandy", desc: "Chille bar met Lion en Arrack-cocktails. Populair bij backpackers.", lat: 7.2910, lng: 80.6365 },
+                    { type: "bezienswaardigheid", name: "Tempel van de Tand", desc: "De heiligste boeddhistische tempel van Sri Lanka. Ga rond 18:30 voor de avondceremonie.", lat: 7.2936, lng: 80.6413 },
+                    { type: "bezienswaardigheid", name: "Kandy Lake", desc: "Mooi kunstmatig meer midden in de stad. Prachtig voor een avondwandeling.", lat: 7.2910, lng: 80.6400 },
+                    { type: "activiteit", name: "Royal Botanical Gardens", desc: "Enorme botanische tuin in Peradeniya. Orchideeën, vleermuizen en reusachtige bomen.", lat: 7.2709, lng: 80.5961 }
                 ]
             },
             {
@@ -184,6 +214,15 @@
                     "Treintickets Kandy-Ella boeken! (Dit moet je écht nu of uiterlijk in juni al regelen via 12Go.asia).",
                     "Goede wandelschoenen of stevige sneakers inpakken.",
                     "Voldoende water inslaan voor de hike naar Ella Rock."
+                ],
+                tips: [
+                    { type: "eten", name: "Ella Village Restaurant", desc: "Authentieke rice & curry op een veranda met uitzicht over de bergen.", lat: 6.8660, lng: 81.0460 },
+                    { type: "eten", name: "Matey Hut", desc: "Relaxte tent met goede burgers, smoothies en Sri Lankaanse gerechten.", lat: 6.8675, lng: 81.0475 },
+                    { type: "drinken", name: "Cafe Chill", desc: "Populairste hangout van Ella. Cocktails met uitzicht op Ella Gap.", lat: 6.8665, lng: 81.0480 },
+                    { type: "bezienswaardigheid", name: "Nine Arches Bridge", desc: "Iconisch koloniaal spoorviaduct in de jungle. Ga vroeg (06:00) voor de mooiste foto's.", lat: 6.8780, lng: 81.0590 },
+                    { type: "activiteit", name: "Ella Rock Hike", desc: "4 uur hiken door theeplantages naar de top. Episch panorama-uitzicht!", lat: 6.8560, lng: 81.0540 },
+                    { type: "activiteit", name: "Ravana Falls", desc: "25 meter hoge waterval vlak bij Ella. Lekker even zwemmen onder de val.", lat: 6.8410, lng: 81.0500 },
+                    { type: "activiteit", name: "Diyaluma Falls", desc: "De op een na hoogste waterval van Sri Lanka. Zwemmen in de natuurlijke infinity pools bovenaan!", lat: 6.7330, lng: 81.0190 }
                 ]
             },
             {
@@ -202,6 +241,12 @@
                     "Jeepsafari + privégids vooraf boeken (of via jullie guesthouse regelen zodra je aankomt).",
                     "Muggenspray (met DEET) inslaan voor in het park.",
                     "Zonnebrand, zonnebril en een pet klaarleggen voor in de open jeep."
+                ],
+                tips: [
+                    { type: "eten", name: "Safari Inn Restaurant", desc: "Simpel maar goed restaurant vlak bij de ingang van het park. Goede rice & curry.", lat: 6.4570, lng: 80.8870 },
+                    { type: "drinken", name: "Athgira River Camping", desc: "Avondbiertje bij een kampvuur aan de rivier. Magische sfeer na een safari.", lat: 6.4380, lng: 80.8850 },
+                    { type: "bezienswaardigheid", name: "Elephant Transit Home", desc: "Opvangcentrum voor weesjonge olifantjes. Voedertijden om 09:00, 12:00 en 15:00.", lat: 6.4740, lng: 80.8970 },
+                    { type: "activiteit", name: "Udawalawe National Park", desc: "Ochtend-jeepsafari (05:30). Olifanten gegarandeerd! Ook krokodillen, buffels en roofvogels.", lat: 6.4450, lng: 80.8900 }
                 ]
             },
             {
@@ -219,6 +264,15 @@
                 todos: [
                     "Hotel binnen de muren van het Fort boeken voor de leukste sfeer.",
                     "Chauffeur regelen voor de rit van Udawalawe naar Galle."
+                ],
+                tips: [
+                    { type: "eten", name: "A Minute by Tuk Tuk", desc: "Hip restaurantje in het Fort. Moderne Sri Lankaanse fusion keuken. Reserveer vooruit!", lat: 6.0268, lng: 80.2170 },
+                    { type: "eten", name: "Lucky Fort Restaurant", desc: "Budget-friendly met dakterras. Geweldige seafood curry met uitzicht.", lat: 6.0280, lng: 80.2175 },
+                    { type: "drinken", name: "Wijaya Beach", desc: "Relaxte strandbar net buiten het Fort. Cocktails met je voeten in het zand.", lat: 6.0080, lng: 80.2450 },
+                    { type: "drinken", name: "Fort Bazaar Cocktail Bar", desc: "Stijlvolle bar in een gerenoveerd koloniaal pand. Gin-tonics met Ceylonse kruiden.", lat: 6.0270, lng: 80.2165 },
+                    { type: "bezienswaardigheid", name: "Galle Fort Muren", desc: "Wandel over de 400 jaar oude VOC-muren bij zonsondergang. Onvergetelijk!", lat: 6.0260, lng: 80.2150 },
+                    { type: "bezienswaardigheid", name: "Galle Lighthouse", desc: "Fotogenieke vuurtoren op de punt van het Fort. Mooiste bij golden hour.", lat: 6.0240, lng: 80.2200 },
+                    { type: "activiteit", name: "Unawatuna Beach", desc: "Prachtig halfrond strand 10 min van Galle. Snorkelen en zwemmen.", lat: 6.0100, lng: 80.2490 }
                 ]
             },
             {
@@ -237,6 +291,12 @@
                     "Pakken uithangen en eventueel laten stomen bij het resort.",
                     "Kado/envelop voor het bruidspaar inpakken.",
                     "Speech of stukje nog één keer goed oefenen samen!"
+                ],
+                tips: [
+                    { type: "eten", name: "Anantara Spice Traders", desc: "Restaurant in het resort. Aziatische fusion. Perfect voor de avond voor de bruiloft.", lat: 6.5850, lng: 79.9600 },
+                    { type: "drinken", name: "Anantara Pool Bar", desc: "Cocktails bij het infinity pool met uitzicht op de Indische Oceaan.", lat: 6.5855, lng: 79.9595 },
+                    { type: "bezienswaardigheid", name: "Kalutara Bodhiya Temple", desc: "Enorme witte stupa op een heuvel. Mooie tussenstop als je wat wilt verkennen.", lat: 6.5830, lng: 79.9620 },
+                    { type: "activiteit", name: "Kalu Ganga Rivier", desc: "Rustige boottocht over de rivier achter het resort. Krokodillen en mangroves.", lat: 6.5870, lng: 79.9640 }
                 ]
             },
             {
@@ -255,6 +315,15 @@
                     "Lange binnenlandse taxi/transfer (van Kalutara naar Trincomalee) goed van tevoren regelen.",
                     "Snorkeltour naar Pigeon Island regelen via jullie verblijf.",
                     "Zwemkleding en een goed boek in de aanslag houden."
+                ],
+                tips: [
+                    { type: "eten", name: "Fernando's Restaurant", desc: "Beste seafood van Nilaveli. Verse gegrilde vis en garnalen, recht van de boot.", lat: 8.6810, lng: 81.1930 },
+                    { type: "eten", name: "Trinco Visvangst BBQ", desc: "Strandtentjes in Trincomalee centrum. Vis uitkiezen en laten grillen. Vers en goedkoop.", lat: 8.5770, lng: 81.2340 },
+                    { type: "drinken", name: "Nilaveli Beach Hotel Bar", desc: "Voeten in het zand, biertje erbij. Perfecte sundowner-locatie.", lat: 8.7000, lng: 81.1890 },
+                    { type: "bezienswaardigheid", name: "Koneswaram Temple", desc: "Hindoe-tempel op een klif boven de oceaan. Indrukwekkend uitzicht!", lat: 8.5740, lng: 81.2380 },
+                    { type: "bezienswaardigheid", name: "Marble Beach", desc: "Prachtig wit strand beheerd door de marine. Rustig en kristalhelder water.", lat: 8.6300, lng: 81.2060 },
+                    { type: "activiteit", name: "Pigeon Island Snorkeling", desc: "Boottrip (30 min) naar het koraalrif. Schildpadden, rifhaaien en tropische vissen!", lat: 8.7160, lng: 81.1750 },
+                    { type: "activiteit", name: "Whale Watching Trincomalee", desc: "Tussen maart-augustus grote kans op blauwe vinvissen en potvissen.", lat: 8.5700, lng: 81.2500 }
                 ]
             },
             {
@@ -272,6 +341,13 @@
                 todos: [
                     "Laatste Roepies opmaken aan goede maaltijden of souvenirs.",
                     "Online inchecken voor de KLM/andere vlucht vanaf Colombo."
+                ],
+                tips: [
+                    { type: "eten", name: "Kottu Lab", desc: "De beste kottu roti van Negombo. Probeer de cheese kottu als guilty pleasure.", lat: 7.2110, lng: 79.8420 },
+                    { type: "eten", name: "Saman's Restaurant", desc: "Heerlijke seafood aan de strandboulevard. Goede afsluiter van de reis.", lat: 7.2140, lng: 79.8370 },
+                    { type: "drinken", name: "Jetwing Beach Bar", desc: "Laatste sundowner aan het strand. Mooie cocktails en relaxte vibe.", lat: 7.2180, lng: 79.8360 },
+                    { type: "bezienswaardigheid", name: "St. Mary's Church", desc: "Prachtige roze kerk uit de koloniale tijd. Negombo heeft een groot christelijk erfgoed.", lat: 7.2100, lng: 79.8380 },
+                    { type: "activiteit", name: "Negombo Beach Sunset Walk", desc: "Laatste avondwandeling over het strand. Souvenirwinkeltjes langs de weg.", lat: 7.2150, lng: 79.8350 }
                 ]
             },
             {
@@ -290,7 +366,8 @@
                     "Paspoorten en tickets bij de hand houden.",
                     "Achterbank van de taxi checken of je niks bent vergeten!",
                     "Foto's en verhalen delen in de familie groepsapp."
-                ]
+                ],
+                tips: []
             }
         ];
 
@@ -307,6 +384,7 @@
         // Sla markers op om ze later te kunnen openen
         const markers = {};
         const latLngs = [];
+        let activeTipMarkers = []; // Tip-markers die momenteel op de kaart staan
 
         // --- 3. BOUW INTERFACE & KAART MARKERS ---
         const itineraryContainer = document.getElementById('itinerary');
@@ -383,6 +461,35 @@
                                     `).join('')}
                                 </ul>
                             </div>
+
+                            <!-- Tips per categorie -->
+                            ${stop.tips && stop.tips.length > 0 ? `
+                            <div class="mt-4 space-y-3">
+                                <h4 class="font-heading font-bold text-jungle flex items-center">
+                                    <i class="fa-solid fa-map-pin mr-2 text-spice"></i> Tips in de buurt:
+                                </h4>
+                                ${Object.keys(tipIcons).map(type => {
+                                    const tipsOfType = stop.tips.filter(t => t.type === type);
+                                    if (tipsOfType.length === 0) return '';
+                                    const ti = tipIcons[type];
+                                    return `
+                                        <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
+                                            <h5 class="font-bold text-sm mb-2 flex items-center" style="color: ${ti.color}">
+                                                <i class="fa-solid ${ti.icon} mr-2"></i> ${ti.label}
+                                            </h5>
+                                            <ul class="space-y-2">
+                                                ${tipsOfType.map(tip => `
+                                                    <li class="text-sm text-gray-700 flex items-start">
+                                                        <span class="w-2 h-2 rounded-full shrink-0 mt-1.5 mr-2" style="background-color: ${ti.color}"></span>
+                                                        <span><strong>${tip.name}</strong> — ${tip.desc}</span>
+                                                    </li>
+                                                `).join('')}
+                                            </ul>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            ` : ''}
                         </div>
 
                     </div>
@@ -419,6 +526,10 @@
                 el.classList.remove('rotate-180');
             });
 
+            // Verwijder altijd bestaande tip-markers
+            activeTipMarkers.forEach(m => map.removeLayer(m));
+            activeTipMarkers = [];
+
             // Toggle de geklikte
             if (!isOpen) {
                 content.classList.add('open');
@@ -427,8 +538,25 @@
                 // --- Koppel dit aan de kaart! ---
                 const stopData = tripData.find(s => s.id === id);
                 if (stopData) {
+                    // Voeg tip-markers toe aan de kaart
+                    if (stopData.tips && stopData.tips.length > 0) {
+                        stopData.tips.forEach(tip => {
+                            const ti = tipIcons[tip.type];
+                            const tipIcon = L.divIcon({
+                                className: 'tip-icon',
+                                html: `<div style="background-color: ${ti.color}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"><i class="fa-solid ${ti.icon}" style="color: white; font-size: 10px;"></i></div>`,
+                                iconSize: [22, 22],
+                                iconAnchor: [11, 11],
+                                popupAnchor: [0, -11]
+                            });
+                            const tipMarker = L.marker([tip.lat, tip.lng], {icon: tipIcon}).addTo(map);
+                            tipMarker.bindPopup(`<div class="text-center"><strong>${tip.name}</strong><br/><span class="text-xs text-gray-500">${tip.desc}</span></div>`);
+                            activeTipMarkers.push(tipMarker);
+                        });
+                    }
+
                     // Zoom soepel in op de locatie en open de popup
-                    map.flyTo([stopData.lat, stopData.lng], 9, {
+                    map.flyTo([stopData.lat, stopData.lng], 12, {
                         animate: true,
                         duration: 1.5
                     });
